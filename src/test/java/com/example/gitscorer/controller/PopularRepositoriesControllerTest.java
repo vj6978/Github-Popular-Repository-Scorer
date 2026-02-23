@@ -37,13 +37,8 @@ public class PopularRepositoriesControllerTest {
     @MockitoBean
     private ScoringService scoringService;
 
-    @DisplayName("""
-            GIVEN: Request for popular github repositories
-            WHEN: Repositories are queried
-            THEN: A list of repositories is returned with successful status
-            """)
     @Test
-    public void happy_path_test() throws Exception {
+    public void should_return_valid_response_when_request_is_valid() throws Exception {
         var request = new RepositoryRequestDto(
                 LocalDate.now(),
                 "Java"
@@ -62,6 +57,22 @@ public class PopularRepositoriesControllerTest {
                         .content(objectMapper.writeValueAsString(request))
                         .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.forks").value(1));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].forks").value(1));
     }
+
+    @Test
+    public void should_return_bad_request_when_request_is_invalid() throws Exception {
+        var request = new RepositoryRequestDto(
+                LocalDate.now(),
+                null
+        );
+        mockMvc.perform(
+                        MockMvcRequestBuilders.post("/repositories")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                                .accept(MediaType.APPLICATION_JSON)
+                ).andExpect(status().isBadRequest());
+    }
+
 }

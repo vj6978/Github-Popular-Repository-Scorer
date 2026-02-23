@@ -11,16 +11,14 @@ import java.util.Objects;
 
 import static com.example.gitscorer.constants.ScoreCalculatorConstants.LAMBDA;
 
-/***
- * Using exponential decay for time, so as to not run into a scenario where subtracting a fixed number
- * point for each unit time of inactivity eventually leads to negative scores. The negative sign indicates decay
- * and not growth.
- * Lambda is the constant. After ln(Half life in days), a repository's recency score drops by 50%.
- * $$Score_{recency} = e^{-\lambda \times \Delta days}$$
- * @param
- * @return
+/**
+ * Implements a scoring strategy based on the most recent update timestamp of a repository.
+ * This strategy uses an exponential decay model to assign higher scores to more recently updated repositories.
+ * The decay is controlled by a lambda constant, ensuring scores do not become negative due to inactivity.
+ *
+ * The formula used is: `Score_{recency} = e^{-\lambda \times \Delta days}`
+ * where `\Delta days` is the number of days since the last update.
  */
-
 @Slf4j
 @Component
 public class MostRecentUpdateScoringStrategy implements ScoringStrategy {
@@ -28,6 +26,14 @@ public class MostRecentUpdateScoringStrategy implements ScoringStrategy {
     @Value("${weights.mostRecentUpdateWeight:1}")
     private Integer mostRecentUpdateWeight;
 
+    /**
+     * Normalizes the recency of the most recent update for a given repository and calculates its weighted score.
+     * The score decays exponentially with the number of days since the last update.
+     *
+     * @param repository The {@link RepositoryDetailBo} containing the repository details, including the most recent update timestamp.
+     * @return A double representing the normalized and weighted score based on the recency of the last update.
+     * @throws NullPointerException if the most recent update timestamp in the repository is null.
+     */
     @Override
     public double normalizeAndCalculateScore(RepositoryDetailBo repository) {
         var mostRecentUpdate = repository.mostRecentUpdate();
@@ -36,7 +42,7 @@ public class MostRecentUpdateScoringStrategy implements ScoringStrategy {
         var daysToMostRecentUpdate = ChronoUnit.DAYS.between(mostRecentUpdate, Instant.now());
         var normalizedMostRecentUpdateScore = Math.exp(LAMBDA * daysToMostRecentUpdate);
 
-        log.info("Normalized Fork Score: {}", normalizedMostRecentUpdateScore);
+        log.info("Normalized Most Recent Update Score: {}", normalizedMostRecentUpdateScore);
 
         return normalizedMostRecentUpdateScore * mostRecentUpdateWeight;
     }
