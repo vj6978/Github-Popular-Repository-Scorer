@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.stereotype.Component;
 
+import javax.naming.ServiceUnavailableException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
