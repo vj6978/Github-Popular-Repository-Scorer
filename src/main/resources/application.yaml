@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: gitscorer
+  threads:
+    virtual:
+      enabled: true
+
+weights:
+  starsWeight: 1
+  forksWeight: 1
+  mostRecentUpdateWeight: 1
+
+topNToReturn: 10
+pageLimit: 10
+
