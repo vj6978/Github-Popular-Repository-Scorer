@@ -1,0 +1,11 @@
+spring:
+  cloud:
+    openfeign:
+      client:
+        config:
+          github-api-client:
+            url: http://localhost:8089
+
+github:
+  api:
+    url: http://localhost:8089

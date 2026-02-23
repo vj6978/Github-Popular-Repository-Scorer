@@ -1,25 +1,20 @@
 package com.example.gitscorer.exception;
 
-import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(FeignException.class)
-    public void handleFeignException(FeignException exception) {
-        switch(exception.status()) {
-            case 503 -> throw new GithubServiceUnavailableException("Service is unavailable due to too many exceptions!");
-            default -> throw new RuntimeException("Unknown Error Type");
-        }
+    @ExceptionHandler(GithubServiceUnavailableException.class)
+    public ResponseEntity<String> handleFeignException(GithubServiceUnavailableException exception) {
+      return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Github is unavailable at this time!");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

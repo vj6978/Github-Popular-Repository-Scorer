@@ -52,7 +52,7 @@ public class PopularRepositoriesControllerTest {
         Mockito.when(mapper.toDto(repositoryBo)).thenReturn(repositoryResponseDto);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/repositories")
+                MockMvcRequestBuilders.post("/repositories/popular")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                         .accept(MediaType.APPLICATION_JSON)
@@ -68,7 +68,7 @@ public class PopularRepositoriesControllerTest {
                 null
         );
         mockMvc.perform(
-                        MockMvcRequestBuilders.post("/repositories")
+                        MockMvcRequestBuilders.post("/repositories/popular")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                                 .accept(MediaType.APPLICATION_JSON)

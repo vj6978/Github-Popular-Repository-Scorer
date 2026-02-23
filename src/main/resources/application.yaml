@@ -4,11 +4,29 @@ spring:
   threads:
     virtual:
       enabled: true
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+
+resilience4j:
+  circuitbreaker:
+    instance:
+      github-api-client:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+
+github:
+  api:
+    url: https://api.github.com
+
 
 weights:
-  starsWeight: 1
-  forksWeight: 1
-  mostRecentUpdateWeight: 1
+  stars: 1
+  forks: 1
+  mostRecentUpdates: 2
 
 topNToReturn: 10
 pageLimit: 10

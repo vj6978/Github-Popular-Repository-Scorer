@@ -1,30 +1,29 @@
 package com.example.gitscorer.service.strategy;
 
 import com.example.gitscorer.businessobject.RepositoryDetailBo;
+import com.example.gitscorer.service.strategy.util.Formulas;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Objects;
-
-import static com.example.gitscorer.constants.ScoreCalculatorConstants.LAMBDA;
 
 /**
  * Implements a scoring strategy based on the most recent update timestamp of a repository.
  * This strategy uses an exponential decay model to assign higher scores to more recently updated repositories.
  * The decay is controlled by a lambda constant, ensuring scores do not become negative due to inactivity.
- *
+ * <p>
  * The formula used is: `Score_{recency} = e^{-\lambda \times \Delta days}`
  * where `\Delta days` is the number of days since the last update.
  */
 @Slf4j
 @Component
 public class MostRecentUpdateScoringStrategy implements ScoringStrategy {
+    private final int mostRecentUpdateWeight;
 
-    @Value("${weights.mostRecentUpdateWeight:1}")
-    private Integer mostRecentUpdateWeight;
+    public MostRecentUpdateScoringStrategy(@Value("${weights.mostRecentUpdates:1}") int mostRecentUpdateWeight) {
+        this.mostRecentUpdateWeight = mostRecentUpdateWeight;
+    }
 
     /**
      * Normalizes the recency of the most recent update for a given repository and calculates its weighted score.
@@ -38,9 +37,9 @@ public class MostRecentUpdateScoringStrategy implements ScoringStrategy {
     public double normalizeAndCalculateScore(RepositoryDetailBo repository) {
         var mostRecentUpdate = repository.mostRecentUpdate();
         Objects.requireNonNull(mostRecentUpdate);
+        var formula = Objects.requireNonNull(Formulas.formulaFactory("mostRecentUpdate"));
 
-        var daysToMostRecentUpdate = ChronoUnit.DAYS.between(mostRecentUpdate, Instant.now());
-        var normalizedMostRecentUpdateScore = Math.exp(LAMBDA * daysToMostRecentUpdate);
+        var normalizedMostRecentUpdateScore = formula.apply(repository);
 
         log.info("Normalized Most Recent Update Score: {}", normalizedMostRecentUpdateScore);
 

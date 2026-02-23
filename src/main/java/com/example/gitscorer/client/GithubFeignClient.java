@@ -5,7 +5,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@FeignClient(name = "github-api-client", url = "https://api.github.com")
+@FeignClient(name = "github-api-client", url = "${github.api.url:https://api.github.com}", fallbackFactory = GithubFallbackFactory.class)
 public interface GithubFeignClient {
     @GetMapping(
             value = "/search/repositories",

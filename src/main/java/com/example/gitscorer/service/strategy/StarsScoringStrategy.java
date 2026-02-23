@@ -1,28 +1,22 @@
 package com.example.gitscorer.service.strategy;
 
 import com.example.gitscorer.businessobject.RepositoryDetailBo;
+import com.example.gitscorer.service.strategy.util.Formulas;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
-import static com.example.gitscorer.constants.ScoreCalculatorConstants.MAX_STARS_NORMALIZED;
-
-/**
- * Implements a scoring strategy based on the number of stars a repository has.
- * The score is normalized using a logarithmic scale to account for the power-law distribution of stars,
- * and then weighted by a configurable factor.
- *
- * The normalization formula used is: `log10(stars + 1) / MAX_STARS_NORMALIZED`.
- * This approach helps to give a more normalized value due to the power-law distribution of star counts.
- */
 @Slf4j
 @Component
 public class StarsScoringStrategy implements ScoringStrategy {
 
-    @Value("${weights.starsWeight:1}")
-    private Integer starsWeight;
+    private final int starsWeight;
+
+    public StarsScoringStrategy(@Value("${weights.stars:1}") int starsWeight) {
+        this.starsWeight = starsWeight;
+    }
 
     /**
      * Normalizes the number of stars for a given repository and calculates its weighted score.
@@ -36,8 +30,9 @@ public class StarsScoringStrategy implements ScoringStrategy {
     public double normalizeAndCalculateScore(RepositoryDetailBo repository) {
         var stars = repository.stars();
         Objects.requireNonNull(stars);
+        var formula = Objects.requireNonNull(Formulas.formulaFactory("stars"));
 
-        var normalizedStarsScore =  Math.log10(stars + 1) / MAX_STARS_NORMALIZED;
+        var normalizedStarsScore = formula.apply(repository);
         log.info("Normalized Stars Score: {}", normalizedStarsScore);
 
         return normalizedStarsScore * starsWeight;

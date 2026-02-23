@@ -18,19 +18,24 @@ import java.util.stream.IntStream;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class RepositoryRetrieverFacade {
-
-    @Value("${topNToReturn:10}")
-    private int topNToReturn;
-
-    @Value("${pageLimit:3}")
-    private int pageLimit;
+    private final int pageLimit;
+    private final int topNToReturn;
 
     private final RepositoryMapper mapper;
     private final ScoreCalculator scoreCalculator;
     private final GithubFeignClient githubFeignClient;
     private final SimpleAsyncTaskExecutor asyncTaskExecutor = new SimpleAsyncTaskExecutor();
+
+    public RepositoryRetrieverFacade(@Value("${topNToReturn:10}") int topNToReturn, @Value("${pageLimit:3}") int pageLimit, RepositoryMapper mapper, ScoreCalculator scoreCalculator, GithubFeignClient githubFeignClient) {
+        this.topNToReturn = topNToReturn;
+        this.pageLimit = pageLimit;
+        this.mapper = mapper;
+        this.scoreCalculator = scoreCalculator;
+        this.githubFeignClient = githubFeignClient;
+
+        asyncTaskExecutor.setVirtualThreads(true);
+    }
 
     private final Function<RepositoryRequestDto, String> languageAndEarliestCreatedDate =
             request -> "language:" +
@@ -40,23 +45,27 @@ public class RepositoryRetrieverFacade {
 
     public List<RepositoryDetailBo> getTopNRepositories(RepositoryRequestDto request) {
         int RESULTS_PER_PAGE = 100;
-        asyncTaskExecutor.setVirtualThreads(true);
 
         final PriorityQueue<RepositoryDetailBo> popularReposQueue = new PriorityQueue<>(topNToReturn, Comparator.comparingDouble(RepositoryDetailBo::score));
 
         List<CompletableFuture<List<RepositoryDetailBo>>> repositoryFutures = IntStream.rangeClosed(1, pageLimit)
                 .mapToObj(page -> CompletableFuture.supplyAsync(() -> {
-                    var queryParameters = new GithubSearchQueryParametersDto(
-                            languageAndEarliestCreatedDate.apply(request),
-                            RESULTS_PER_PAGE,
-                            page
-                    );
-                    return githubFeignClient.getRepositories(queryParameters).items()
-                            .stream()
-                            .map(mapper::toBo)
-                            .map(scoreCalculator::calculateAndUpdateWithScore)
-                            .toList();
-                }, asyncTaskExecutor))
+                                    var queryParameters = new GithubSearchQueryParametersDto(
+                                            languageAndEarliestCreatedDate.apply(request),
+                                            RESULTS_PER_PAGE,
+                                            page
+                                    );
+                                    return githubFeignClient.getRepositories(queryParameters).items()
+                                            .stream()
+                                            .map(mapper::toBo)
+                                            .map(scoreCalculator::calculateAndUpdateWithScore)
+                                            .toList();
+                                }, asyncTaskExecutor)
+                                .exceptionally(exception -> {
+                                    log.info("Retrieving repositories for page {} failed! Returning empty list!", page);
+                                    return Collections.emptyList();
+                                })
+                )
                 .toList();
 
         List<RepositoryDetailBo> repositories = repositoryFutures

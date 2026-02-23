@@ -21,7 +21,7 @@ public class PopularRepositoriesController {
     private final ScoringService scoringService;
     private final RepositoryMapper mapper;
 
-    @PostMapping("/repositories")
+    @PostMapping("/repositories/popular")
     public ResponseEntity<List<RepositoryInfoResponseDto>> getPopularRepositories(@Valid @RequestBody RepositoryRequestDto request) {
         log.info("Fetching most popular repositories with criteria {}", request.toString());
         List<RepositoryInfoResponseDto> response = scoringService.getPopularRepositories(request).stream().map(mapper::toDto).toList();

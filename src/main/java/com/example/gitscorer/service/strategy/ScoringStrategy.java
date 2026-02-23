@@ -7,6 +7,7 @@ import com.example.gitscorer.businessobject.RepositoryDetailBo;
  * Each strategy focuses on a specific metric (e.g., stars, forks, recency of update).
  */
 public interface ScoringStrategy {
+
     /**
      * Normalizes a specific metric of a given repository and calculates its weighted score.
      *
