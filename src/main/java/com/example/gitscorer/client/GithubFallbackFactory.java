@@ -12,7 +12,7 @@ public class GithubFallbackFactory implements FallbackFactory<GithubFeignClient>
     @Override
     public GithubFeignClient create(Throwable cause) {
         return queryParametersDto -> {
-            throw new GithubServiceUnavailableException("Call to Github has failed! Returning empty response");
+            throw new GithubServiceUnavailableException("Call to Github has failed! Returning empty response! Reason was " + cause.getCause() + " with message " + cause.getLocalizedMessage());
         };
     }
 }

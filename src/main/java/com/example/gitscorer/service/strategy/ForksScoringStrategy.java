@@ -33,7 +33,7 @@ public class ForksScoringStrategy implements ScoringStrategy {
         var formula = Objects.requireNonNull(Formulas.formulaFactory("forks"));
 
         var normalizedForkScore = formula.apply(repository);
-        log.info("Normalized Fork Score: {}", normalizedForkScore);
+        log.debug("Normalized Fork Score: {}", normalizedForkScore);
 
         return normalizedForkScore * forksWeight;
     }

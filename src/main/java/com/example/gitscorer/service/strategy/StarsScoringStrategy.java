@@ -33,7 +33,7 @@ public class StarsScoringStrategy implements ScoringStrategy {
         var formula = Objects.requireNonNull(Formulas.formulaFactory("stars"));
 
         var normalizedStarsScore = formula.apply(repository);
-        log.info("Normalized Stars Score: {}", normalizedStarsScore);
+        log.debug("Normalized Stars Score: {}", normalizedStarsScore);
 
         return normalizedStarsScore * starsWeight;
     }

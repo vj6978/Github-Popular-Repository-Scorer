@@ -11,7 +11,7 @@ spring:
 
 resilience4j:
   circuitbreaker:
-    instance:
+    instances:
       github-api-client:
         slidingWindowSize: 10
         failureRateThreshold: 50
@@ -21,7 +21,7 @@ resilience4j:
 github:
   api:
     url: https://api.github.com
-
+    token: ${GITHUB_TOKEN}
 
 weights:
   stars: 1

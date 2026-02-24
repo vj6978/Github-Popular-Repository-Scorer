@@ -4,6 +4,9 @@ import com.example.gitscorer.datatransferobject.RepositoryInfoResponseDto;
 import com.example.gitscorer.datatransferobject.RepositoryRequestDto;
 import com.example.gitscorer.mapper.RepositoryMapper;
 import com.example.gitscorer.service.ScoringService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +21,15 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class PopularRepositoriesController {
-    private final ScoringService scoringService;
     private final RepositoryMapper mapper;
+    private final ScoringService scoringService;
 
+    @Operation(summary = "Get Top Repositories", description = "Fetches the highest scoring repositories based on stars, forks, and recency.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the list"),
+            @ApiResponse(responseCode = "400", description = "Invalid date or language provided"),
+            @ApiResponse(responseCode = "503", description = "Could not reach Github")
+    })
     @PostMapping("/repositories/popular")
     public ResponseEntity<List<RepositoryInfoResponseDto>> getPopularRepositories(@Valid @RequestBody RepositoryRequestDto request) {
         log.info("Fetching most popular repositories with criteria {}", request.toString());

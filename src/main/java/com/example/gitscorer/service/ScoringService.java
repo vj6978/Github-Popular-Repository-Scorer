@@ -12,12 +12,12 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ScoringService {
-    private final RepositoryRetrieverFacade repositoryRetrieverFacade;
+    private final RepositoryRetriever repositoryRetriever;
 
     public List<RepositoryDetailBo> getPopularRepositories(RepositoryRequestDto request) {
-        log.debug("Requesting Github for repositories in {} by earliest created date {}", request.repositoryLanguage(), request.earliestCreatedDate());
-        List<RepositoryDetailBo> topNRepositories = repositoryRetrieverFacade.getTopNRepositories(request);
-        log.info("Top N Repositories were {}", topNRepositories);
+        log.debug("Requesting Github for {} repositories by earliest created date {}", request.repositoryLanguage(), request.earliestCreatedDate());
+        List<RepositoryDetailBo> topNRepositories = repositoryRetriever.getTopNRepositories(request);
+        log.debug("Top N Repositories were {}", topNRepositories);
         return topNRepositories;
     }
 }

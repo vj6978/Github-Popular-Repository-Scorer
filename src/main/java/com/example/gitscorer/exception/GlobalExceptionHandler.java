@@ -12,11 +12,6 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(GithubServiceUnavailableException.class)
-    public ResponseEntity<String> handleFeignException(GithubServiceUnavailableException exception) {
-      return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Github is unavailable at this time!");
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleBadRequest(MethodArgumentNotValidException exception) {
         Map<String, String> errorMap = new HashMap<>();

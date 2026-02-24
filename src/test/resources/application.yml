@@ -9,3 +9,4 @@ spring:
 github:
   api:
     url: http://localhost:8089
+    token: 1234

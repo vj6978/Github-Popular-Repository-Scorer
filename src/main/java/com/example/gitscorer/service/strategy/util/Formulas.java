@@ -26,7 +26,7 @@ public final class Formulas {
         try {
             return strategies.get(metric);
         } catch (NullPointerException ex) {
-            log.info("No formula exists for metric {}", metric);
+            log.debug("No formula exists for metric {}", metric);
             return null;
         }
     }

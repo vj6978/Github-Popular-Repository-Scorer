@@ -18,7 +18,7 @@ import java.util.List;
 @ExtendWith(MockitoExtension.class)
 public class ScoringServiceTest {
     @Mock
-    private RepositoryRetrieverFacade repositoryRetrieverFacade;
+    private RepositoryRetriever repositoryRetriever;
 
     @InjectMocks
     private ScoringService scoringService;
@@ -33,7 +33,7 @@ public class ScoringServiceTest {
 
         var repositoryBo = new RepositoryDetailBo("Tetris", 1, 2, Instant.now(), 10.0);
 
-        Mockito.when(repositoryRetrieverFacade.getTopNRepositories(request)).thenReturn(List.of(repositoryBo));
+        Mockito.when(repositoryRetriever.getTopNRepositories(request)).thenReturn(List.of(repositoryBo));
 
         List<RepositoryDetailBo> result = scoringService.getPopularRepositories(request);
 

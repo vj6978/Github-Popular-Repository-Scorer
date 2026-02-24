@@ -41,7 +41,7 @@ public class MostRecentUpdateScoringStrategy implements ScoringStrategy {
 
         var normalizedMostRecentUpdateScore = formula.apply(repository);
 
-        log.info("Normalized Most Recent Update Score: {}", normalizedMostRecentUpdateScore);
+        log.debug("Normalized Most Recent Update Score: {}", normalizedMostRecentUpdateScore);
 
         return normalizedMostRecentUpdateScore * mostRecentUpdateWeight;
     }
