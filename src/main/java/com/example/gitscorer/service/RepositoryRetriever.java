@@ -15,14 +15,11 @@ public class RepositoryRetriever {
     private final int pageLimit;
     private final int topNToReturn;
     private final GithubApiFacade githubApiFacade;
-    private final SimpleAsyncTaskExecutor asyncTaskExecutor = new SimpleAsyncTaskExecutor();
 
     public RepositoryRetriever(@Value("${topNToReturn:10}") int topNToReturn, @Value("${pageLimit:3}") int pageLimit, GithubApiFacade githubApiFacade) {
         this.pageLimit = pageLimit;
         this.topNToReturn = topNToReturn;
         this.githubApiFacade = githubApiFacade;
-
-        asyncTaskExecutor.setVirtualThreads(true);
     }
 
     public List<RepositoryDetailBo> getTopNRepositories(RepositoryRequestDto request) {
