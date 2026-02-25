@@ -13,12 +13,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @Slf4j
 @RestController
+@RequestMapping("api/v1")
 @RequiredArgsConstructor
 public class PopularRepositoriesController {
     private final RepositoryMapper mapper;
@@ -30,7 +32,7 @@ public class PopularRepositoriesController {
             @ApiResponse(responseCode = "400", description = "Invalid date or language provided"),
             @ApiResponse(responseCode = "503", description = "Could not reach Github")
     })
-    @PostMapping("/repositories/popular")
+    @PostMapping("repositories/popular")
     public ResponseEntity<List<RepositoryInfoResponseDto>> getPopularRepositories(@Valid @RequestBody RepositoryRequestDto request) {
         log.info("Fetching most popular repositories with criteria {}", request.toString());
         List<RepositoryInfoResponseDto> response = scoringService.getPopularRepositories(request).stream().map(mapper::toDto).toList();
