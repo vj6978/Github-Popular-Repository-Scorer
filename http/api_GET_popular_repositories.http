@@ -1,3 +1,0 @@
-POST http://localhost:8080/repositories/popular
-Content-Type: application/json
-Accept: application/json
